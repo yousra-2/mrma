@@ -14,6 +14,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -33,7 +34,7 @@ public class Appointment implements AppointmentsApi {
     @Override
     @PostMapping
     public ResponseEntity<String> addAppointment(@RequestBody AppointmentRequest appointmentRequest) {
-        List<AppointmentEntity> existingAppointments = appointmentRepository.findByDateAndDoctorId(appointmentRequest.getDate(), appointmentRequest.getDoctorId());
+        List<AppointmentEntity> existingAppointments = new ArrayList<>();//appointmentRepository.findByDateAndDoctorId(appointmentRequest.getDate(), appointmentRequest.getDoctorId());
 
         if (!existingAppointments.isEmpty()) {
             return ResponseEntity.badRequest().body("Appointment already exists on this date for the selected doctor. Please choose another date.");
@@ -60,14 +61,14 @@ public class Appointment implements AppointmentsApi {
         }
 
         // Check for conflicts with other appointments
-        List<AppointmentEntity> conflictingAppointments = appointmentRepository.findByDateAndDoctorId(appointmentDateRequest.getDate(), existingAppointment.getDoctorId());
+        List<AppointmentEntity> conflictingAppointments = new ArrayList<>(); //appointmentRepository.findByDateAndDoctorId(appointmentDateRequest.getDate(), existingAppointment.getDoctorId());
 
         if (!conflictingAppointments.isEmpty()) {
             return ResponseEntity.badRequest().body("Appointment already exists on this date for the selected doctor. Please choose another date.");
         }
 
         // Update the appointment date
-        existingAppointment.setDate(appointmentDateRequest.getDate());
+        //existingAppointment.setDate(appointmentDateRequest.getDate());
         appointmentRepository.save(existingAppointment);
 
         // Return success message

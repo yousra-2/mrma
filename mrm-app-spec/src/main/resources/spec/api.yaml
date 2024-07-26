@@ -41,7 +41,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/AuthenticationResponse'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          $ref: '#/components/schemas/Unauthorized'
 
   /users:
     post:
@@ -72,9 +72,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/responses/BadRequest'
+                $ref: '#/components/schemas/BadRequest'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          $ref: '#/components/schemas/Unauthorized'
       security:
         - BearerAuth: []
 
@@ -93,7 +93,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/UserEntity'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          $ref: '#/components/schemas/Unauthorized'
       security:
         - BearerAuth: []
 
@@ -133,15 +133,15 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/responses/BadRequest'
+                $ref: '#/components/schemas/BadRequest'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          $ref: '#/components/schemas/Unauthorized'
         '404':
           description: User not found
           content:
             application/json:
               schema:
-                $ref: '#/components/responses/NotFound'
+                $ref: '#/components/schemas/NotFound'
       security:
         - BearerAuth: []
 
@@ -174,15 +174,15 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/responses/BadRequest'
+                $ref: '#/components/schemas/BadRequest'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          $ref: '#/components/schemas/Unauthorized'
         '404':
           description: User not found
           content:
             application/json:
               schema:
-                $ref: '#/components/responses/NotFound'
+                $ref: '#/components/schemas/NotFound'
       security:
         - BearerAuth: []
 
@@ -215,15 +215,15 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/responses/BadRequest'
+                $ref: '#/components/schemas/BadRequest'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          $ref: '#/components/schemas/Unauthorized'
         '404':
           description: User not found
           content:
             application/json:
               schema:
-                $ref: '#/components/responses/NotFound'
+                $ref: '#/components/schemas/NotFound'
       security:
         - BearerAuth: []
 
@@ -250,7 +250,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/UserEntity'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          $ref: '#/components/schemas/Unauthorized'
       security:
         - BearerAuth: []
 
@@ -268,7 +268,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Visits'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          $ref: '#/components/schemas/Unauthorized'
       security:
         - BearerAuth: []
 
@@ -293,7 +293,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Visit'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          $ref: '#/components/schemas/Unauthorized'
       security:
         - BearerAuth: []
 
@@ -326,11 +326,11 @@ paths:
                 type: string
                 example: Appointment already exists on this date for the selected doctor. Please choose another date.
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          $ref: '#/components/schemas/Unauthorized'
       security:
         - BearerAuth: []
 
-    /appointments/{appointmentId}:
+  /appointments/{appointmentId}:
     put:
       tags:
         - Appointments
@@ -362,13 +362,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/responses/BadRequest'
+                $ref: '#/components/schemas/BadRequest'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          $ref: '#/components/schemas/Unauthorized'
       security:
         - BearerAuth: []
-
-
 
   /medicalfiles:
     post:
@@ -399,9 +397,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/responses/BadRequest'
+                $ref: '#/components/schemas/BadRequest'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          $ref: '#/components/schemas/Unauthorized'
       security:
         - BearerAuth: []
 
@@ -448,9 +446,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/responses/BadRequest'
+                $ref: '#/components/schemas/BadRequest'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          $ref: '#/components/schemas/Unauthorized'
       security:
         - BearerAuth: []
 
@@ -469,6 +467,12 @@ components:
       properties:
         token:
           type: string
+        expiresAt:
+          type: integer
+          format: int64
+        expiresIn:
+          type: integer
+          format: int64
 
     RegistrationRequest:
       type: object
@@ -558,40 +562,30 @@ components:
           type: string
           format: date-time
 
-
-  responses:
-    Unauthorized:
-      description: Authentication credentials are missing or invalid
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Authentication credentials are missing or invalid
-
     BadRequest:
+      type: object
       description: Bad request, invalid input
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Bad request, invalid input
-
+      properties:
+        message:
+          type: string
+          example: Bad request, invalid input
+          
     NotFound:
+      type: object
       description: Resource not found
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Resource not found
+      properties:
+        message:
+          type: string
+          example: Resource not found
+          
+    Unauthorized:
+      type: object
+      description: Authentication credentials are missing or invalid
+      properties:
+        message:
+          type: string
+          example: Authentication credentials are missing or invalid
+
 
   securitySchemes:
     BearerAuth:

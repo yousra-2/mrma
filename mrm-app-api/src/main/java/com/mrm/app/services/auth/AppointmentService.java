@@ -16,7 +16,7 @@ public class AppointmentService {
 
     public AppointmentEntity createAppointment(AppointmentRequest appointmentRequest) {
         AppointmentEntity appointment = new AppointmentEntity();
-        appointment.setDate(appointmentRequest.getDate());
+        //appointment.setDate(appointmentRequest.getDate());
         appointment.setDescription(appointmentRequest.getDescription());
         appointment.setPatientId(appointmentRequest.getPatientId());
         appointment.setDoctorId(appointmentRequest.getDoctorId());
