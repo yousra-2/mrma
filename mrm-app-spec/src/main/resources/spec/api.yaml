@@ -1,0 +1,600 @@
+openapi: 3.0.1
+info:
+  title: MRM App API
+  description: API for MRM App users
+  contact:
+    email: yousra@gmail.com
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:9090
+
+tags:
+  - name: Users
+    description: MRM App users entities
+  - name: Visits
+    description: TODO
+  - name: Appointments
+    description: TODO
+  - name: MedicalFiles
+    description: TODO
+
+paths:
+  /users/authenticate:
+    post:
+      tags:
+        - Users
+      summary: Authenticate user
+      operationId: authenticate
+      requestBody:
+        description: Authentication credentials
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthenticationRequest"
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /users:
+    post:
+      tags:
+        - Users
+      summary: Add new user
+      operationId: addUser
+      requestBody:
+        description: Registration details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegistrationRequest"
+      responses:
+        '200':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User registered successfully
+        '400':
+          description: Bad request, username or email already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+      security:
+        - BearerAuth: []
+
+    get:
+      tags:
+        - Users
+      summary: Get all users
+      operationId: getAllUsers
+      responses:
+        '200':
+          description: A list of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserEntity'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+      security:
+        - BearerAuth: []
+
+  /users/{username}:
+    put:
+      tags:
+        - Users
+      summary: Update user by username
+      operationId: updateUser
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Username of the user to update
+      requestBody:
+        description: Updated user details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserEntity"
+      responses:
+        '200':
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User updated successfully
+        '400':
+          description: Bad request, invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/NotFound'
+      security:
+        - BearerAuth: []
+
+  /users/{username}/archive:
+    put:
+      tags:
+        - Users
+      summary: Archive user by username
+      operationId: archiveUser
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Username of the user to archive
+      responses:
+        '200':
+          description: User archived successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User archived successfully
+        '400':
+          description: Bad request, invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/NotFound'
+      security:
+        - BearerAuth: []
+
+  /users/{username}/unArchive:
+    put:
+      tags:
+        - Users
+      summary: Unarchive user by username
+      operationId: unArchiveUser
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Username of the user to unarchive
+      responses:
+        '200':
+          description: User unarchived successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User unarchived successfully
+        '400':
+          description: Bad request, invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/NotFound'
+      security:
+        - BearerAuth: []
+
+  /users/search:
+    get:
+      tags:
+        - Users
+      summary: Search users by query
+      operationId: searchUsers
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Query to search users
+      responses:
+        '200':
+          description: List of users matching the query
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserEntity'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+      security:
+        - BearerAuth: []
+
+  /visits:
+    get:
+      tags:
+        - Visits
+      summary: Get user visits
+      operationId: getUserVisits
+      responses:
+        '200':
+          description: A list of visits
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Visits'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+      security:
+        - BearerAuth: []
+
+  /visits/{visitId}:
+    get:
+      tags:
+        - Visits
+      summary: Get visit details by visit ID
+      operationId: getVisitDetails
+      parameters:
+        - name: visitId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the visit to retrieve details for
+      responses:
+        '200':
+          description: Medical file associated with the visit (stored in AWS S3)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Visit'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+      security:
+        - BearerAuth: []
+
+  /appointments:
+    post:
+      tags:
+        - Appointments
+      summary: Add a new appointment
+      operationId: addAppointment
+      requestBody:
+        description: Appointment details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AppointmentRequest"
+      responses:
+        '201':
+          description: Appointment booked successfully
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Appointment booked successfully.
+        '400':
+          description: Bad request, invalid input or appointment conflict
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Appointment already exists on this date for the selected doctor. Please choose another date.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+      security:
+        - BearerAuth: []
+
+    /appointments/{appointmentId}:
+    put:
+      tags:
+        - Appointments
+      summary: Update appointment date by appointment ID
+      operationId: updateAppointmentDate
+      parameters:
+        - name: appointmentId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the appointment to update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AppointmentDateRequest"
+      responses:
+        '200':
+          description: Appointment date updated successfully
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Appointment date updated successfully
+        '400':
+          description: Bad request, invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+      security:
+        - BearerAuth: []
+
+
+
+  /medicalfiles:
+    post:
+      tags:
+        - MedicalFiles
+      summary: Upload a medical file
+      operationId: uploadMedicalFile
+      requestBody:
+        description: Medical file to upload
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: Medical file uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadResponse'
+        '400':
+          description: Bad request, invalid file
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+      security:
+        - BearerAuth: []
+
+  /medicalfiles/{fileId}:
+    put:
+      tags:
+        - MedicalFiles
+      summary: Update a medical file
+      operationId: updateMedicalFile
+      parameters:
+        - name: fileId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the medical file to update
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: File updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  fileId:
+                    type: string
+                    description: ID of the updated file in the system
+                  fileUrl:
+                    type: string
+                    format: uri
+                    description: URL of the updated file in AWS S3
+        '400':
+          description: Bad request, invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+      security:
+        - BearerAuth: []
+
+components:
+  schemas:
+    AuthenticationRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+
+    AuthenticationResponse:
+      type: object
+      properties:
+        token:
+          type: string
+
+    RegistrationRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+
+    UserEntity:
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        roles:
+          type: array
+          items:
+            type: string
+        active:
+          type: boolean
+
+    AppointmentRequest:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date-time
+        patientId:
+          type: string
+        doctorId:
+          type: string
+        description:
+          type: string
+
+    AppointmentDateRequest:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date-time
+
+    AppointmentResponse:    # Add this schema definition
+      type: object
+      properties:
+        appointmentId:
+          type: string
+        date:
+          type: string
+          format: date-time
+        status:
+          type: string
+
+    UploadResponse:
+      type: object
+      properties:
+        fileUrl:
+          type: string
+
+    Visits:
+      type: object
+      properties:
+        visits:
+          type: array
+          items:
+            type: object
+            properties:
+              visitId:
+                type: string
+              userId:
+                type: string
+              date:
+                type: string
+                format: date-time
+
+    Visit:
+      type: object
+      properties:
+        visitId:
+          type: string
+        userId:
+          type: string
+        date:
+          type: string
+          format: date-time
+
+
+  responses:
+    Unauthorized:
+      description: Authentication credentials are missing or invalid
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Authentication credentials are missing or invalid
+
+    BadRequest:
+      description: Bad request, invalid input
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Bad request, invalid input
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Resource not found
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
