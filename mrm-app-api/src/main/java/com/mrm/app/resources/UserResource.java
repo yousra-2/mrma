@@ -1,10 +1,14 @@
 package com.mrm.app.resources;
 
-import com.mrm.app.entities.UserEntity;
 import com.mrm.app.handlers.UsersApi;
 import com.mrm.app.models.AuthenticationRequest;
 import com.mrm.app.models.AuthenticationResponse;
-import com.mrm.app.services.auth.models.RegistrationRequest;
+import com.mrm.app.models.InlineResponse200;
+import com.mrm.app.models.InlineResponse2001;
+import com.mrm.app.models.InlineResponse2002;
+import com.mrm.app.models.InlineResponse2003;
+import com.mrm.app.models.RegistrationRequest;
+import com.mrm.app.models.UserEntity;
 import com.mrm.app.repositories.UserRepository;
 import com.mrm.app.services.auth.JwtService;
 import com.mrm.app.services.auth.UserService;
@@ -57,7 +61,7 @@ public class UserResource implements UsersApi {
     public ResponseEntity<AuthenticationResponse> authenticate(@Valid @RequestBody AuthenticationRequest authRequest) {
         try {
             authManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
+                new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
             );
         } catch (BadCredentialsException e) {
             System.out.println(authRequest.getUsername() + authRequest.getPassword());
@@ -67,14 +71,46 @@ public class UserResource implements UsersApi {
 
         Token token = jwtService.generateToken(userDetails);
         return ResponseEntity.ok(
-                new AuthenticationResponse()
-                        .token(token.getAccessToken())
-                        .expiresAt(epochMillis(token.getExpiresAt()))
-                        .expiresIn(token.getExpiresIn().toMillis())
+            new AuthenticationResponse()
+                .token(token.getAccessToken())
+            .expiresAt(epochMillis(token.getExpiresAt()))
+            .expiresIn(token.getExpiresIn().toMillis())
         );
     }
 
-    @PostMapping("/users")
+    @Override
+    public ResponseEntity<InlineResponse200> addUser(RegistrationRequest registrationRequest) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<InlineResponse2002> archiveUser(String username) {
+        return null;
+    }
+
+
+
+    @Override
+    public ResponseEntity<List<UserEntity>> getAllUsers() {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<List<UserEntity>> searchUsers(String query) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<InlineResponse2003> unArchiveUser(String username) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<InlineResponse2001> updateUser(String username, UserEntity userEntity) {
+        return null;
+    }
+
+    /*@PostMapping("/users")
     public ResponseEntity<String> registerUser(@Valid @RequestBody RegistrationRequest registrationRequest) {
         // Check if username or email already exists
         Optional<UserEntity> existingUserByUsername = userRepository.findByUsername(registrationRequest.getUsername());
@@ -180,10 +216,12 @@ public class UserResource implements UsersApi {
 
 
 
+   */
+
     private static long epochMillis(LocalDateTime dateTime) {
         return dateTime
-                .atZone(ZoneId.systemDefault())
-                .toInstant()
-                .toEpochMilli();
+            .atZone(ZoneId.systemDefault())
+            .toInstant()
+            .toEpochMilli();
     }
 }
