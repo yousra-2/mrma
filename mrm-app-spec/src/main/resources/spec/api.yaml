@@ -91,43 +91,31 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/UserEntity'
+                  $ref: '#/components/schemas/User'
         '401':
           $ref: '#/components/schemas/Unauthorized'
       security:
         - BearerAuth: []
 
-  /users/{username}:
     put:
       tags:
         - Users
       summary: Update user by username
       operationId: updateUser
-      parameters:
-        - name: username
-          in: path
-          required: true
-          schema:
-            type: string
-          description: Username of the user to update
       requestBody:
         description: Updated user details
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UserEntity"
+              $ref: "#/components/schemas/User"
       responses:
         '200':
           description: User updated successfully
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: User updated successfully
+                $ref: "#/components/schemas/User"
         '400':
           description: Bad request, invalid input
           content:
@@ -248,7 +236,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/UserEntity'
+                  $ref: '#/components/schemas/User'
         '401':
           $ref: '#/components/schemas/Unauthorized'
       security:
@@ -484,7 +472,7 @@ components:
         password:
           type: string
 
-    UserEntity:
+    User:
       type: object
       properties:
         username:

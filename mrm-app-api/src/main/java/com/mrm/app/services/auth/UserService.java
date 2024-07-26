@@ -28,5 +28,7 @@ public class UserService implements IUserService {
         return userRepository.findByUsername(username);
     }
 
-
+    public UserEntity update(UserEntity user) {
+        return null;
+    }
 }

@@ -1,5 +1,7 @@
 package com.mrm.app.resources;
 
+import com.mrm.app.converters.UserConverter;
+import com.mrm.app.entities.UserEntity;
 import com.mrm.app.handlers.UsersApi;
 import com.mrm.app.models.AuthenticationRequest;
 import com.mrm.app.models.AuthenticationResponse;
@@ -8,11 +10,13 @@ import com.mrm.app.models.InlineResponse2001;
 import com.mrm.app.models.InlineResponse2002;
 import com.mrm.app.models.InlineResponse2003;
 import com.mrm.app.models.RegistrationRequest;
-import com.mrm.app.models.UserEntity;
+import com.mrm.app.models.User;
 import com.mrm.app.repositories.UserRepository;
 import com.mrm.app.services.auth.JwtService;
 import com.mrm.app.services.auth.UserService;
 import com.mrm.app.services.auth.models.Token;
+import com.mrm.app.validators.UserValidator;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -83,31 +87,37 @@ public class UserResource implements UsersApi {
         return null;
     }
 
-    @Override
+    /*@Override
     public ResponseEntity<InlineResponse2002> archiveUser(String username) {
         return null;
-    }
-
-
+    }*/
 
     @Override
-    public ResponseEntity<List<UserEntity>> getAllUsers() {
+    public ResponseEntity<InlineResponse2001> archiveUser(String username) {
         return null;
     }
 
     @Override
-    public ResponseEntity<List<UserEntity>> searchUsers(String query) {
+    public ResponseEntity<List<User>> getAllUsers() {
         return null;
     }
 
     @Override
-    public ResponseEntity<InlineResponse2003> unArchiveUser(String username) {
+    public ResponseEntity<List<User>> searchUsers(String query) {
         return null;
     }
 
     @Override
-    public ResponseEntity<InlineResponse2001> updateUser(String username, UserEntity userEntity) {
+    public ResponseEntity<InlineResponse2002> unArchiveUser(String username) {
         return null;
+    }
+
+    @Override
+    public ResponseEntity<User> updateUser(User user) {
+        UserValidator.validate(user);
+        UserEntity entity = UserConverter.convert(user);
+        UserEntity updated = userService.update(entity);
+        return ResponseEntity.ok(UserConverter.convert(updated));
     }
 
     /*@PostMapping("/users")
