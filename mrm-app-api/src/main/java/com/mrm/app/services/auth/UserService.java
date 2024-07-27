@@ -1,8 +1,12 @@
 package com.mrm.app.services.auth;
 
 import com.mrm.app.entities.UserEntity;
+import com.mrm.app.exceptions.ValidationException;
+import com.mrm.app.models.RegistrationRequest;
+import com.mrm.app.models.UpdateUserRequest;
 import com.mrm.app.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -12,11 +16,8 @@ public class UserService implements IUserService {
 
     @Autowired
     private UserRepository userRepository;
-
-    @Override
-    public UserEntity save(UserEntity user) {
-        return userRepository.save(user);
-    }
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public Optional<UserEntity> findById(String id) {
@@ -28,7 +29,38 @@ public class UserService implements IUserService {
         return userRepository.findByUsername(username);
     }
 
-    public UserEntity update(UserEntity user) {
-        return null;
+    public Optional<UserEntity> update(UpdateUserRequest user) {
+        Optional<UserEntity> optionalEntity = findByUsername(user.getUsername());
+        if (!optionalEntity.isPresent()) {
+            return Optional.empty();
+        }
+        UserEntity entity = optionalEntity.get();
+        if (user.getActive() != null) {
+            entity.setActive(user.getActive());
+        }
+        if (user.getEmail() != null) {
+            entity.setEmail(user.getEmail());
+        }
+        return Optional.of(save(entity));
     }
+
+    public UserEntity addUser(RegistrationRequest user) {
+        Optional<UserEntity> optionalEntity = findByUsername(user.getUsername());
+        if (optionalEntity.isPresent()) {
+            throw new ValidationException(String.format("Username %s already exists!", user.getUsername()));
+        }
+        UserEntity entity = new UserEntity();
+        entity.setEmail(user.getEmail());
+        entity.setUsername(user.getUsername());
+        entity.setActive(true);
+        entity.setPassword(passwordEncoder.encode(user.getPassword()));
+        /* TODO entity.setRole(Roles.); */
+        save(entity);
+        return entity;
+    }
+
+    private UserEntity save(UserEntity user) {
+        return userRepository.save(user);
+    }
+
 }

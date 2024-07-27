@@ -3,6 +3,7 @@ package com.mrm.app;
 import com.mrm.app.filters.JwtRequestFilter;
 import com.mrm.app.services.auth.DefaultUserDetailsService;
 import com.google.common.collect.ImmutableList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -54,11 +55,11 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.cors();
         http.csrf().disable()
-                .authorizeRequests()
-                .antMatchers(publicUrls()).permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+            .authorizeRequests()
+            .antMatchers(publicUrls()).permitAll()
+            .anyRequest().authenticated()
+            .and()
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
@@ -73,16 +74,16 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
-
     private String[] publicUrls() {
-        return new String[] {
-                "/api.yaml",
-                "/v2/api-docs",
-                "/swagger-resources/**",
-                "/swagger-ui.html",
-                "/webjars/**",
-                "/users/authenticate",
-                "/mrma/"
+        return new String[]{
+            "/api.yaml",
+            "/users",
+            "/v2/api-docs",
+            "/swagger-resources/**",
+            "/swagger-ui.html",
+            "/webjars/**",
+            "/users/authenticate",
+            "/mrma/"
         };
     }
 }

@@ -3,7 +3,8 @@ package com.mrm.app.constants;
 public enum Roles {
 
     USER("USER"),
-    ADMIN("USER,ADMIN");
+    DOCTOR("DOCTOR"),
+    HR("HR");
 
     private final String value;
 
@@ -14,5 +15,14 @@ public enum Roles {
     @Override
     public String toString() {
         return value;
+    }
+
+    public static Roles fromRaw(String raw) {
+        for (Roles value : values()) {
+            if (value.value.equals(raw)) {
+                return value;
+            }
+        }
+        return USER;
     }
 }

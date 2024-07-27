@@ -57,16 +57,12 @@ paths:
             schema:
               $ref: "#/components/schemas/RegistrationRequest"
       responses:
-        '200':
-          description: User registered successfully
+        '201':
+          description: Successful operation
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: User registered successfully
+                $ref: '#/components/schemas/User'
         '400':
           description: Bad request, username or email already exists
           content:
@@ -81,21 +77,27 @@ paths:
     get:
       tags:
         - Users
-      summary: Get all users
-      operationId: getAllUsers
+      summary: Get users all users, or if filters provided get specific users if exist
+      operationId: findUsers
+      parameters:
+        - name: username
+          in: query
+          required: false
+          schema:
+            type: string
+          description: If provided, result will be filtered using it
       responses:
         '200':
-          description: A list of users
+          description: Successful operation
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/Users'
         '401':
           $ref: '#/components/schemas/Unauthorized'
       security:
         - BearerAuth: []
+
 
     put:
       tags:
@@ -108,14 +110,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/User"
+              $ref: "#/components/schemas/UpdateUserRequest"
       responses:
         '200':
-          description: User updated successfully
+          description: Successful operation
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
+                $ref: '#/components/schemas/User'
         '400':
           description: Bad request, invalid input
           content:
@@ -133,114 +135,7 @@ paths:
       security:
         - BearerAuth: []
 
-  /users/{username}/archive:
-    put:
-      tags:
-        - Users
-      summary: Archive user by username
-      operationId: archiveUser
-      parameters:
-        - name: username
-          in: path
-          required: true
-          schema:
-            type: string
-          description: Username of the user to archive
-      responses:
-        '200':
-          description: User archived successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: User archived successfully
-        '400':
-          description: Bad request, invalid input
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadRequest'
-        '401':
-          $ref: '#/components/schemas/Unauthorized'
-        '404':
-          description: User not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NotFound'
-      security:
-        - BearerAuth: []
 
-  /users/{username}/unArchive:
-    put:
-      tags:
-        - Users
-      summary: Unarchive user by username
-      operationId: unArchiveUser
-      parameters:
-        - name: username
-          in: path
-          required: true
-          schema:
-            type: string
-          description: Username of the user to unarchive
-      responses:
-        '200':
-          description: User unarchived successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: User unarchived successfully
-        '400':
-          description: Bad request, invalid input
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadRequest'
-        '401':
-          $ref: '#/components/schemas/Unauthorized'
-        '404':
-          description: User not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NotFound'
-      security:
-        - BearerAuth: []
-
-  /users/search:
-    get:
-      tags:
-        - Users
-      summary: Search users by query
-      operationId: searchUsers
-      parameters:
-        - name: query
-          in: query
-          required: true
-          schema:
-            type: string
-          description: Query to search users
-      responses:
-        '200':
-          description: List of users matching the query
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/User'
-        '401':
-          $ref: '#/components/schemas/Unauthorized'
-      security:
-        - BearerAuth: []
 
   /visits:
     get:
@@ -455,12 +350,6 @@ components:
       properties:
         token:
           type: string
-        expiresAt:
-          type: integer
-          format: int64
-        expiresIn:
-          type: integer
-          format: int64
 
     RegistrationRequest:
       type: object
@@ -472,8 +361,31 @@ components:
         password:
           type: string
 
+    Users:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
     User:
       type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        roles:
+          type: array
+          items:
+            type: string
+        active:
+          type: boolean
+
+    UpdateUserRequest:
+      type: object
+      required:
+        - username
       properties:
         username:
           type: string
@@ -557,7 +469,7 @@ components:
         message:
           type: string
           example: Bad request, invalid input
-          
+
     NotFound:
       type: object
       description: Resource not found
@@ -565,7 +477,7 @@ components:
         message:
           type: string
           example: Resource not found
-          
+
     Unauthorized:
       type: object
       description: Authentication credentials are missing or invalid
