@@ -3,7 +3,7 @@ info:
   title: MRM App API
   description: API for MRM App users
   contact:
-    email: yousra@gmail.com
+    email: acharoui.yousra@gmail.com
   version: 1.0.0
 
 servers:
@@ -11,13 +11,11 @@ servers:
 
 tags:
   - name: Users
-    description: MRM App users entities
-  - name: Visits
-    description: TODO
+    description: Operations about user
   - name: Appointments
-    description: TODO
+    description: Operations about Appointments
   - name: MedicalFiles
-    description: TODO
+    description: Everything about Medicalefiles
 
 paths:
   /users/authenticate:
@@ -135,52 +133,38 @@ paths:
       security:
         - BearerAuth: []
 
-
-
-  /visits:
+  /appointments:
     get:
       tags:
-        - Visits
-      summary: Get user visits
-      operationId: getUserVisits
-      responses:
-        '200':
-          description: A list of visits
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Visits'
-        '401':
-          $ref: '#/components/schemas/Unauthorized'
-      security:
-        - BearerAuth: []
-
-  /visits/{visitId}:
-    get:
-      tags:
-        - Visits
-      summary: Get visit details by visit ID
-      operationId: getVisitDetails
+        - Appointments
+      summary: Get user appointments, or if filters provided get specific appointment if exist
+      operationId: getUserappointments
       parameters:
-        - name: visitId
-          in: path
-          required: true
+        - name: username
+          in: query
+          required: false
           schema:
             type: string
-          description: ID of the visit to retrieve details for
+          description: If provided, result will be filtered using it
+        - name: appointmentId
+          in: query
+          required: false
+          schema:
+            type: string
+          description: If provided, result will be filtered using it
       responses:
         '200':
-          description: Medical file associated with the visit (stored in AWS S3)
+          description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Visit'
+                $ref: '#/components/schemas/Appointments'
         '401':
           $ref: '#/components/schemas/Unauthorized'
       security:
         - BearerAuth: []
 
-  /appointments:
+
     post:
       tags:
         - Appointments
@@ -195,12 +179,11 @@ paths:
               $ref: "#/components/schemas/AppointmentRequest"
       responses:
         '201':
-          description: Appointment booked successfully
+          description: Successful operation
           content:
             application/json:
               schema:
-                type: string
-                example: Appointment booked successfully.
+                $ref: '#/components/schemas/AppointmentResponse'
         '400':
           description: Bad request, invalid input or appointment conflict
           content:
@@ -234,12 +217,11 @@ paths:
               $ref: "#/components/schemas/AppointmentDateRequest"
       responses:
         '200':
-          description: Appointment date updated successfully
+          description: Successful operation
           content:
             application/json:
               schema:
-                type: string
-                example: Appointment date updated successfully
+                $ref: '#/components/schemas/Appointment'
         '400':
           description: Bad request, invalid input
           content:
@@ -271,10 +253,7 @@ paths:
       responses:
         '201':
           description: Medical file uploaded successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UploadResponse'
+
         '400':
           description: Bad request, invalid file
           content:
@@ -312,18 +291,7 @@ paths:
       responses:
         '200':
           description: File updated successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  fileId:
-                    type: string
-                    description: ID of the updated file in the system
-                  fileUrl:
-                    type: string
-                    format: uri
-                    description: URL of the updated file in AWS S3
+
         '400':
           description: Bad request, invalid input
           content:
@@ -342,24 +310,46 @@ components:
       properties:
         username:
           type: string
+          example: yacharoui
         password:
           type: string
+          example: root
 
     AuthenticationResponse:
       type: object
       properties:
         token:
           type: string
+          example: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlciIsImV4cCI6MTcyMjE3NDU2MiwiaWF0IjoxNzIyMTY3MzYyfQ.A6EIOGqlgu87MmSSRLvPztpCspR13E3ch9K-eAjvz8s
 
     RegistrationRequest:
       type: object
+      required:
+        - username
+        - email
+        - password
+        - firstname
+        - lastname
+        - role
       properties:
         username:
           type: string
+          example: yacharoui
         email:
           type: string
+          example: acharoui.yousra@gmail.com
         password:
           type: string
+          example: root
+        firstname:
+          type: string
+          example: yousra
+        lastname:
+          type: string
+          example: ach
+        role:
+          type: string
+          example: HR
 
     Users:
       type: object
@@ -368,19 +358,53 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/User'
+
     User:
       type: object
       properties:
         username:
           type: string
+          example: yacharoui
         email:
           type: string
-        roles:
-          type: array
-          items:
-            type: string
+          example: acharoui.yousra@gmail.com
+        firstname:
+          type: string
+          example: yousra
+        lastname:
+          type: string
+          example: ach
+        role:
+          type: string
+          example: HR
         active:
           type: boolean
+          example: TRUE
+
+    Appointments:
+      type: object
+      properties:
+        appointments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Appointment'
+
+    Appointment:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date-time
+          example: "2024-08-01T09:30:00Z"
+        patientId:
+          type: string
+          example: "12345"
+        doctorId:
+          type: string
+          example: "75345"
+        description:
+          type: string
+          example: "Annual check-up"
 
     UpdateUserRequest:
       type: object
@@ -389,78 +413,67 @@ components:
       properties:
         username:
           type: string
+          example: yacharoui
         email:
           type: string
+          example: acharoui.yousra@gmail.com
         roles:
           type: array
           items:
             type: string
+            example: HR
         active:
           type: boolean
+          example: TRUE
 
     AppointmentRequest:
       type: object
+      required:
+        - date
+        - patientId
+        - doctorId
+        - description
       properties:
         date:
           type: string
           format: date-time
+          example: "2024-08-01T09:30:00Z"
         patientId:
           type: string
+          example: "12345"
         doctorId:
           type: string
+          example: "75345"
         description:
           type: string
+          example: "Annual check-up"
 
     AppointmentDateRequest:
       type: object
+      required:
+        - date
       properties:
         date:
           type: string
           format: date-time
+          example: "2024-08-01T09:30:00Z"
 
-    AppointmentResponse:    # Add this schema definition
+    AppointmentResponse:
       type: object
       properties:
-        appointmentId:
-          type: string
         date:
           type: string
           format: date-time
-        status:
+          example: "2024-08-01T09:30:00Z"
+        patientId:
           type: string
-
-    UploadResponse:
-      type: object
-      properties:
-        fileUrl:
+          example: "12345"
+        doctorId:
           type: string
-
-    Visits:
-      type: object
-      properties:
-        visits:
-          type: array
-          items:
-            type: object
-            properties:
-              visitId:
-                type: string
-              userId:
-                type: string
-              date:
-                type: string
-                format: date-time
-
-    Visit:
-      type: object
-      properties:
-        visitId:
+          example: "75345"
+        description:
           type: string
-        userId:
-          type: string
-        date:
-          type: string
-          format: date-time
+          example: "Annual check-up"
 
     BadRequest:
       type: object
@@ -485,7 +498,6 @@ components:
         message:
           type: string
           example: Authentication credentials are missing or invalid
-
 
   securitySchemes:
     BearerAuth:

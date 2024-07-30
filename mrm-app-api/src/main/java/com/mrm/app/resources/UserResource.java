@@ -2,6 +2,7 @@ package com.mrm.app.resources;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,7 +31,7 @@ import com.mrm.app.entities.UserEntity;
 import com.mrm.app.handlers.UsersApi;
 import com.mrm.app.models.AuthenticationRequest;
 import com.mrm.app.models.AuthenticationResponse;
-import com.mrm.app.models.InlineResponse200;
+
 import com.mrm.app.models.RegistrationRequest;
 import com.mrm.app.models.UpdateUserRequest;
 import com.mrm.app.models.User;
@@ -41,6 +42,9 @@ import com.mrm.app.services.auth.UserService;
 import com.mrm.app.services.auth.models.Token;
 import com.mrm.app.validators.PermissionValidator;
 import com.mrm.app.validators.UserValidator;
+
+import static java.lang.Boolean.TRUE;
+import static sun.util.locale.LocaleUtils.isEmpty;
 
 
 @RestController
@@ -104,8 +108,28 @@ public class UserResource implements UsersApi {
 
     @Override
     public ResponseEntity<Users> findUsers(String username) {
-        return null;
+        List<UserEntity> userEntities = userService.findAll();
+        List<User> userList = new ArrayList<>();
+        boolean isValid = userValidator.validate(username);
+
+        if (isValid) {
+            userEntities.stream()
+                    .filter(user -> user.getUsername().toLowerCase().contains(username.toLowerCase()))
+                    .map(this::convert)
+                    .forEach(userList::add);
+        } else {
+            userEntities.stream()
+                    .map(this::convert)
+                    .forEach(userList::add);
+        }
+
+        Users response = new Users();
+        response.setUsers(userList);
+        return ResponseEntity.ok(response);
     }
+
+
+
 
     private static long epochMillis(LocalDateTime dateTime) {
         return dateTime

@@ -5,6 +5,7 @@ import com.mrm.app.handlers.AppointmentsApi;
 import com.mrm.app.models.AppointmentDateRequest;
 import com.mrm.app.models.AppointmentRequest;
 import com.mrm.app.models.AppointmentResponse;
+import com.mrm.app.models.Appointments;
 import com.mrm.app.repositories.AppointmentRepository;
 import com.mrm.app.services.auth.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,21 @@ public class Appointment implements AppointmentsApi {
     }
 
     @Override
+    public ResponseEntity<AppointmentResponse> addAppointment(AppointmentRequest appointmentRequest) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<Appointments> getUserappointments(String username, String appointmentId) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<com.mrm.app.models.Appointment> updateAppointmentDate(String appointmentId, AppointmentDateRequest appointmentDateRequest) {
+        return null;
+    }
+
+    /*
     @PostMapping
     public ResponseEntity<String> addAppointment(@RequestBody AppointmentRequest appointmentRequest) {
         List<AppointmentEntity> existingAppointments = new ArrayList<>();//appointmentRepository.findByDateAndDoctorId(appointmentRequest.getDate(), appointmentRequest.getDoctorId());
@@ -74,5 +90,5 @@ public class Appointment implements AppointmentsApi {
         // Return success message
         return ResponseEntity.ok("Appointment date updated successfully.");
     }
-
+*/
 }

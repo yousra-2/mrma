@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -49,18 +50,35 @@ public class UserService implements IUserService {
         if (optionalEntity.isPresent()) {
             throw new ValidationException(String.format("Username %s already exists!", user.getUsername()));
         }
+        Optional<UserEntity> optionalEnt = findByEmail(user.getEmail());
+        if (optionalEnt.isPresent()) {
+            throw new ValidationException(String.format("Email %s already exists!", user.getEmail()));
+        }
         UserEntity entity = new UserEntity();
         entity.setEmail(user.getEmail());
         entity.setUsername(user.getUsername());
         entity.setActive(true);
         entity.setPassword(passwordEncoder.encode(user.getPassword()));
-        /* TODO entity.setRole(Roles.); */
+        entity.setFirstName(user.getFirstname());
+        entity.setLastName(user.getLastname());
+        entity.setRole(user.getRole());
         save(entity);
         return entity;
+    }
+
+    public Optional<UserEntity> findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
     private UserEntity save(UserEntity user) {
         return userRepository.save(user);
     }
 
+    public List<UserEntity> findall() {
+        return userRepository.findAll();
+    }
+
+    public List<UserEntity> findAll() {
+        return userRepository.findAll();
+    }
 }

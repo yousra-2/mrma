@@ -12,7 +12,9 @@ public class UserConverter {
         user.setActive(entity.isActive());
         user.setEmail(entity.getEmail());
         user.setUsername(entity.getUsername());
-        user.setRoles(Collections.singletonList(entity.getRole()));
+        user.setRole(entity.getRole());
+        user.setFirstname(entity.getFirstName());
+        user.setLastname(entity.getLastName());
         return user;
     }
 }

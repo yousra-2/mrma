@@ -1,5 +1,7 @@
 package com.mrm.app.validators;
 
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 import java.util.List;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.mrm.app.exceptions.ValidationException;
 import com.mrm.app.models.RegistrationRequest;
 import com.mrm.app.models.UpdateUserRequest;
+import sun.util.locale.LocaleUtils;
 
 @Service
 public class UserValidator {
@@ -36,6 +39,21 @@ public class UserValidator {
         if (isEmpty(user.getPassword())) {
             throw new ValidationException("Password is missing!");
         }
+        if (isEmpty(user.getEmail())) {
+            throw new ValidationException("Email is missing!");
+        }
+        if (user.getEmail() != null && !isValidEmail(user.getEmail())) {
+            throw new ValidationException("Provided email is not valid!");
+        }
+        if (isEmpty(user.getFirstname())) {
+            throw new ValidationException("Firstname is missing!");
+        }
+        if (isEmpty(user.getLastname())) {
+            throw new ValidationException("Lastname is missing!");
+        }
+        if (isEmpty(user.getRole())) {
+            throw new ValidationException("Role is missing!");
+        }
     }
 
     private static boolean isValidEmail(String email) {
@@ -50,5 +68,20 @@ public class UserValidator {
         return roles == null || roles.isEmpty();
     }
 
+    public boolean validate(String username) {
+        if (!isEmpty(username)) {
+           return TRUE ;
+        } else {
+            return FALSE;
+        }
+    }
 
+
+   /* public void validate(String username) {
+        if (isEmpty(username) ){
+            users = userRepository.findByUsername(username.get());
+        } else {
+            users = userRepository.findAll();
+        }
+    }*/
 }
