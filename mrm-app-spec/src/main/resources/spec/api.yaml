@@ -11,11 +11,11 @@ servers:
 
 tags:
   - name: Users
-    description: Operations about user
+    description: Operations related to user management, including authentication, registration, and profile updates.
   - name: Appointments
-    description: Operations about Appointments
+    description: Operations related to scheduling and managing appointments.
   - name: MedicalFiles
-    description: Everything about Medicalefiles
+    description: Operations related to managing medical files.
 
 paths:
   /users/authenticate:
@@ -45,7 +45,7 @@ paths:
     post:
       tags:
         - Users
-      summary: Add new user
+      summary: Create a new user
       operationId: addUser
       requestBody:
         description: Registration details
@@ -75,7 +75,7 @@ paths:
     get:
       tags:
         - Users
-      summary: Get users all users, or if filters provided get specific users if exist
+      summary: Retrieve all users, or filter the results based on specific criteria if provided.
       operationId: findUsers
       parameters:
         - name: username
@@ -137,8 +137,8 @@ paths:
     get:
       tags:
         - Appointments
-      summary: Get user appointments, or if filters provided get specific appointment if exist
-      operationId: getUserappointments
+      summary: Retrieve all user appointments, or filter the results to find specific appointments if criteria are provided.
+      operationId: getUserAppointments
       parameters:
         - name: username
           in: query
@@ -168,8 +168,8 @@ paths:
     post:
       tags:
         - Appointments
-      summary: Add a new appointment
-      operationId: addAppointment
+      summary: schedule a new appointment
+      operationId: scheduleAppointment
       requestBody:
         description: Appointment details
         required: true
@@ -190,7 +190,7 @@ paths:
             application/json:
               schema:
                 type: string
-                example: Appointment already exists on this date for the selected doctor. Please choose another date.
+                example: An appointment already exists on this date for the selected doctor. Please choose a different date.
         '401':
           $ref: '#/components/schemas/Unauthorized'
       security:
@@ -200,8 +200,8 @@ paths:
     put:
       tags:
         - Appointments
-      summary: Update appointment date by appointment ID
-      operationId: updateAppointmentDate
+      summary: Reschedule the appointment by updating the date using the appointment ID.
+      operationId: rescheduleAppointment
       parameters:
         - name: appointmentId
           in: path

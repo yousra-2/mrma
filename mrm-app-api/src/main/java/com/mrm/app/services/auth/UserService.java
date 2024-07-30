@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -74,11 +75,12 @@ public class UserService implements IUserService {
         return userRepository.save(user);
     }
 
-    public List<UserEntity> findall() {
-        return userRepository.findAll();
-    }
-
-    public List<UserEntity> findAll() {
-        return userRepository.findAll();
+    public List<UserEntity> findUsing(String username) {
+        if (username == null) {
+            return userRepository.findAll();
+        }
+        Optional<UserEntity> optional = findByUsername(username);
+        return optional.map(Collections::singletonList)
+            .orElse(Collections.emptyList());
     }
 }

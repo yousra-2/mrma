@@ -1,49 +1,38 @@
 package com.mrm.app.resources;
 
-import com.mrm.app.entities.AppointmentEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.mrm.app.handlers.AppointmentsApi;
+import com.mrm.app.models.Appointment;
 import com.mrm.app.models.AppointmentDateRequest;
 import com.mrm.app.models.AppointmentRequest;
 import com.mrm.app.models.AppointmentResponse;
 import com.mrm.app.models.Appointments;
 import com.mrm.app.repositories.AppointmentRepository;
 import com.mrm.app.services.auth.AppointmentService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
-@RequestMapping("/appointments")
-@Validated
-public class Appointment implements AppointmentsApi {
+public class AppointmentResource implements AppointmentsApi {
     @Autowired
-    private final AppointmentService appointmentService;
+    private AppointmentService appointmentService;
 
     @Autowired
     private AppointmentRepository appointmentRepository;
 
-    public Appointment(AppointmentService appointmentService) {
-        this.appointmentService = appointmentService;
-    }
-
     @Override
-    public ResponseEntity<AppointmentResponse> addAppointment(AppointmentRequest appointmentRequest) {
+    public ResponseEntity<AppointmentResponse> scheduleAppointment(AppointmentRequest appointmentRequest) {
         return null;
     }
 
     @Override
-    public ResponseEntity<Appointments> getUserappointments(String username, String appointmentId) {
+    public ResponseEntity<Appointments> getUserAppointments(String username, String appointmentId) {
         return null;
     }
 
     @Override
-    public ResponseEntity<com.mrm.app.models.Appointment> updateAppointmentDate(String appointmentId, AppointmentDateRequest appointmentDateRequest) {
+    public ResponseEntity<Appointment> rescheduleAppointment(String appointmentId, AppointmentDateRequest appointmentDateRequest) {
         return null;
     }
 

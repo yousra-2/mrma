@@ -1,8 +1,5 @@
 package com.mrm.app.resources;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,8 +16,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -31,24 +26,17 @@ import com.mrm.app.entities.UserEntity;
 import com.mrm.app.handlers.UsersApi;
 import com.mrm.app.models.AuthenticationRequest;
 import com.mrm.app.models.AuthenticationResponse;
-
 import com.mrm.app.models.RegistrationRequest;
 import com.mrm.app.models.UpdateUserRequest;
 import com.mrm.app.models.User;
 import com.mrm.app.models.Users;
-import com.mrm.app.repositories.UserRepository;
 import com.mrm.app.services.auth.JwtService;
 import com.mrm.app.services.auth.UserService;
 import com.mrm.app.services.auth.models.Token;
 import com.mrm.app.validators.PermissionValidator;
 import com.mrm.app.validators.UserValidator;
 
-import static java.lang.Boolean.TRUE;
-import static sun.util.locale.LocaleUtils.isEmpty;
-
-
 @RestController
-@CrossOrigin
 public class UserResource implements UsersApi {
 
     @Autowired
@@ -61,6 +49,8 @@ public class UserResource implements UsersApi {
     private UserService userService;
     @Autowired
     private UserValidator userValidator;
+    @Autowired
+    private UserConverter userConverter;
     @Autowired
     private PermissionValidator permissionValidator;
     private static final Logger log = LoggerFactory.getLogger(UserResource.class);
@@ -82,8 +72,6 @@ public class UserResource implements UsersApi {
         return ResponseEntity.ok(
             new AuthenticationResponse()
                 .token(token.getAccessToken())
-            //.expiresAt(epochMillis(token.getExpiresAt()))
-            //.expiresIn(token.getExpiresIn().toMillis())
         );
     }
 
@@ -92,7 +80,7 @@ public class UserResource implements UsersApi {
         permissionValidator.onlyAdmin(getCurrentHttpRequest());
         userValidator.validate(registrationRequest);
         UserEntity entity = userService.addUser(registrationRequest);
-        return ResponseEntity.ok(UserConverter.convert(entity));
+        return ResponseEntity.ok(userConverter.convert(entity));
     }
 
     @Override
@@ -103,39 +91,14 @@ public class UserResource implements UsersApi {
             log.warn("Trying to update non-existing user {}!", updateUserRequest.getUsername());
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(UserConverter.convert(updated.get()));
+        return ResponseEntity.ok(userConverter.convert(updated.get()));
     }
 
     @Override
     public ResponseEntity<Users> findUsers(String username) {
-        List<UserEntity> userEntities = userService.findAll();
-        List<User> userList = new ArrayList<>();
-        boolean isValid = userValidator.validate(username);
-
-        if (isValid) {
-            userEntities.stream()
-                    .filter(user -> user.getUsername().toLowerCase().contains(username.toLowerCase()))
-                    .map(this::convert)
-                    .forEach(userList::add);
-        } else {
-            userEntities.stream()
-                    .map(this::convert)
-                    .forEach(userList::add);
-        }
-
-        Users response = new Users();
-        response.setUsers(userList);
-        return ResponseEntity.ok(response);
-    }
-
-
-
-
-    private static long epochMillis(LocalDateTime dateTime) {
-        return dateTime
-            .atZone(ZoneId.systemDefault())
-            .toInstant()
-            .toEpochMilli();
+        userValidator.validateNotEmpty(username);
+        List<UserEntity> entities = userService.findUsing(username);
+        return ResponseEntity.ok(userConverter.convert(entities));
     }
 
     private HttpServletRequest getCurrentHttpRequest() {
