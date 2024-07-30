@@ -57,6 +57,7 @@ public class UserResource implements UsersApi {
 
     @Override
     public ResponseEntity<AuthenticationResponse> authenticate(@Valid @RequestBody AuthenticationRequest authRequest) {
+        userValidator.validate(authRequest);
         try {
             log.info("Trying to login {}", authRequest.getUsername());
             authManager.authenticate(

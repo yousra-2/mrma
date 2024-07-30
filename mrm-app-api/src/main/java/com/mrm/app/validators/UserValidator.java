@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 import org.springframework.stereotype.Service;
 
 import com.mrm.app.exceptions.ValidationException;
+import com.mrm.app.models.AuthenticationRequest;
 import com.mrm.app.models.RegistrationRequest;
 import com.mrm.app.models.UpdateUserRequest;
 
@@ -16,6 +17,15 @@ import com.mrm.app.models.UpdateUserRequest;
 public class UserValidator {
     private static final String EMAIL_REGEX = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
     private static final Pattern EMAIL_PATTERN = Pattern.compile(EMAIL_REGEX);
+
+    public void validate(AuthenticationRequest authRequest) {
+        if (isEmpty(authRequest.getUsername())) {
+            throw new ValidationException("Username is missing!");
+        }
+        if (isEmpty(authRequest.getPassword())) {
+            throw new ValidationException("Password is missing!");
+        }
+    }
 
     public void validate(UpdateUserRequest user) {
         if (isEmpty(user.getUsername())) {
