@@ -86,6 +86,7 @@ public class UserResource implements UsersApi {
 
     @Override
     public ResponseEntity<User> updateUser(UpdateUserRequest updateUserRequest) {
+        permissionValidator.onlyAdmin(getCurrentHttpRequest());
         userValidator.validate(updateUserRequest);
         Optional<UserEntity> updated = userService.update(updateUserRequest);
         if (!updated.isPresent()) {
@@ -97,6 +98,7 @@ public class UserResource implements UsersApi {
 
     @Override
     public ResponseEntity<Users> findUsers(String username) {
+        permissionValidator.onlyAdmin(getCurrentHttpRequest());
         userValidator.validateNotEmpty(username);
         List<UserEntity> entities = userService.findUsing(username);
         return ResponseEntity.ok(userConverter.convert(entities));

@@ -5,7 +5,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "appointments")
@@ -13,13 +13,15 @@ public class AppointmentEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    private LocalDateTime date;
+    private String status;
+
+    private OffsetDateTime date;
 
     private String description;
 
-    private String patientId;
+    private String username;
 
     private String doctorId;
 
@@ -28,27 +30,27 @@ public class AppointmentEntity {
     }
 
     // Parameterized constructor
-    public AppointmentEntity(LocalDateTime date, String description, String patientId, String doctorId) {
+    public AppointmentEntity(OffsetDateTime date, String description, String username, String doctorId) {
         this.date = date;
         this.description = description;
-        this.patientId = patientId;
+        this.username = username;
         this.doctorId = doctorId;
     }
 
     // Getters and setters
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public LocalDateTime getDate() {
+    public OffsetDateTime getDate() {
         return date;
     }
 
-    public void setDate(LocalDateTime date) {
+    public void setDate(OffsetDateTime date) {
         this.date = date;
     }
 
@@ -60,12 +62,12 @@ public class AppointmentEntity {
         this.description = description;
     }
 
-    public String getPatientId() {
-        return patientId;
+    public String getUsername() {
+        return this.username;
     }
 
-    public void setPatientId(String patientId) {
-        this.patientId = patientId;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getDoctorId() {
@@ -82,7 +84,15 @@ public class AppointmentEntity {
                 "id=" + id +
                 ", date=" + date +
                 ", description='" + description + '\'' +
-                ", patientId='" + patientId + '\'' +
+                ", patientId='" + username + '\'' +
                 '}';
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

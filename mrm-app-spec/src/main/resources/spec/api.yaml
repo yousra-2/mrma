@@ -183,7 +183,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AppointmentResponse'
+                $ref: '#/components/schemas/Appointment'
         '400':
           description: Bad request, invalid input or appointment conflict
           content:
@@ -396,15 +396,18 @@ components:
           type: string
           format: date-time
           example: "2024-08-01T09:30:00Z"
-        patientId:
+        username:
           type: string
-          example: "12345"
+          example: "yacharoui"
         doctorId:
           type: string
           example: "75345"
         description:
           type: string
           example: "Annual check-up"
+        status:
+          type: string
+          example: "planned"
 
     UpdateUserRequest:
       type: object
@@ -430,7 +433,7 @@ components:
       type: object
       required:
         - date
-        - patientId
+        - username
         - doctorId
         - description
       properties:
@@ -438,9 +441,9 @@ components:
           type: string
           format: date-time
           example: "2024-08-01T09:30:00Z"
-        patientId:
+        username:
           type: string
-          example: "12345"
+          example: "yacharoui"
         doctorId:
           type: string
           example: "75345"
@@ -457,23 +460,6 @@ components:
           type: string
           format: date-time
           example: "2024-08-01T09:30:00Z"
-
-    AppointmentResponse:
-      type: object
-      properties:
-        date:
-          type: string
-          format: date-time
-          example: "2024-08-01T09:30:00Z"
-        patientId:
-          type: string
-          example: "12345"
-        doctorId:
-          type: string
-          example: "75345"
-        description:
-          type: string
-          example: "Annual check-up"
 
     BadRequest:
       type: object

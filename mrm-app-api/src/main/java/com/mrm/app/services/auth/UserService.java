@@ -70,17 +70,17 @@ public class UserService implements IUserService {
     public Optional<UserEntity> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
-
-    private UserEntity save(UserEntity user) {
-        return userRepository.save(user);
-    }
-
     public List<UserEntity> findUsing(String username) {
         if (username == null) {
             return userRepository.findAll();
         }
         Optional<UserEntity> optional = findByUsername(username);
         return optional.map(Collections::singletonList)
-            .orElse(Collections.emptyList());
+                .orElse(Collections.emptyList());
     }
+    private UserEntity save(UserEntity user) {
+        return userRepository.save(user);
+    }
+
+
 }
